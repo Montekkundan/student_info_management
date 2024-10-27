@@ -36,9 +36,6 @@ ENV/
 env.bak/
 *.env
 
-# Config files
-config/student_management.cfg
-
 # Data files
 data/basic_info.txt
 data/academic_info.txt
