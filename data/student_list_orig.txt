@@ -1,0 +1,35 @@
+student_id first_name last_name email_address role available
+300186798 Anurag	.	Anurag@student.ufv.ca	Student		Yes
+300193769 Harleen	.	HarleenKaur1@student.ufv.ca	Student		Yes
+300196238 Sidak	.	Sidak.Kaur@student.ufv.ca	Student		Yes
+300196283 Sukhman	.	Sukhman.Kaur1@student.ufv.ca	Student		Yes
+300202521 Maansi	.	Maansi.Singh@student.ufv.ca	Student		Yes
+300194002 Shifat	Ahmad	Shifat.Ahmad@student.ufv.ca	Student		Yes
+300177957 Yugam	Arora	Yugam.Arora@student.ufv.ca	Student		Yes
+300195344 Mihir	Badhan	Mihir.Badhan@student.ufv.ca	Student		Yes
+300212193 Navpreet	Badhwal	Navpreetkaurnarindersingh.Badhwal@student.ufv.ca	
+300195285 Vibhu	Dikshit	Vibhu.Dikshit@student.ufv.ca	Student		Yes
+300186394 Sadaf	Faizi	Sadaf.Faizi@student.ufv.ca	Student		Yes
+300200599 Ojas	Ghai	Ojas.Ghai@student.ufv.ca	Student		Yes
+300210760 Ayush	Gokani	Ayush.Gokani@student.ufv.ca	Student		Yes
+300166420 Purbi	Gupta	Purbi.Gupta@student.ufv.ca	Student		Yes
+300164235 Gurmanmeet	Hunjan	Gurmanmeet.Hunjan@student.ufv.ca	Student		Yes
+300169771 David	Jeler	David.Jeler@student.ufv.ca	Student		Yes
+300200602 Annshul	Kashyap	Annshul.Kashyap@student.ufv.ca	Student		Yes
+300196022 Bhanu	Kaushal	Bhanu.Kaushal@student.ufv.ca	Student		Yes
+300181691 Bryan	Koffman	Bryan.Koffman@student.ufv.ca	Student		Yes
+300200716 Montek	Kundan	Montek.Kundan@student.ufv.ca	Student		Yes
+300210817 Sanjana	Kunnathully	Sanjana.Kunnathully@student.ufv.ca	Student		Yes
+300173159 Everett	Letkemann	Everett.Letkemann@student.ufv.ca	Student		Yes
+300206855 Soumyadeep	Majumdar	Soumyadeep.Majumdar@student.ufv.ca	Student		Yes
+300189895 Samee	Maqbool	Samee.Maqbool@student.ufv.ca	Student		Yes
+300204916 Hozefa	Millwala	Hozefa.Millwala@student.ufv.ca	Student		Yes
+300183873 Caleb	Neudorf	Caleb.Neudorf@student.ufv.ca	Student		Yes
+300196116 Dhruv	Pandey	Dhruv.Pandey@student.ufv.ca	Student		Yes
+300199471 Sakshi Nilesh	Patel	SakshiNilesh.Patel@student.ufv.ca	Student		Yes
+300196059 Urvansh	Rattan	Urvansh.Rattan@student.ufv.ca	Student		Yes
+300196118 Bhumanpreet	Saini	Bhumanpreet.Saini@student.ufv.ca	Student		Yes
+300206545 Rahool	Saran	Rahool.Saran@student.ufv.ca	Student		Yes
+300202522 Rajveer	Singh	Rajveer.Singh@student.ufv.ca	Student		Yes
+300199440 Dhruvi	Umatiya	DhruviHasmukh.Umatiya@student.ufv.ca	Student		Yes
+300168997 Aaron	Wiens	Aaron.Wiens@student.ufv.ca	Student		Yes
