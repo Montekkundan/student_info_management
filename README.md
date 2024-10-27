@@ -2,6 +2,13 @@
 
 This project implements a student information management system using Python, designed to process student information from various input files, simulate data, generate weekly summaries, and manage configurations. The project follows a modular structure, handling different tasks like file parsing, simulation, summary generation, and more.
 
+
+# Clone it from Github
+
+```bash
+git clone https://github.com/Montekkundan/student_info_management.git
+```
+
 ## Prerequisites
 
 Make sure you have Python installed (version 3.6 or above). You can install any necessary libraries by running:
