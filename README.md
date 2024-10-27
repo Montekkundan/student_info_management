@@ -6,9 +6,26 @@ This project implements a student information management system using Python, de
 
 Make sure you have Python installed (version 3.6 or above). You can install any necessary libraries by running:
 
+
+create a virtual environment and activate it:
+
+```bass
+python -m venv venv
+```
+
+then source it 
+
+```bash
+source venv/bin/activate
+```
+
+then pip install
+
+
 ```bash
 pip install -r requirements.txt  # if needed
 ```
+
 
 ## Managing the "teacher" Group in Linux
 
