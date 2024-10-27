@@ -90,7 +90,7 @@ def simulate_academic_data(output_file, basic_info_file, weeks_in_semester=12, m
             #  weekly summary
             weekly_summary_file = f"data/summary/student_summary_week_{week}.txt"
             # print(f"-----------------{output_file} ----- {weekly_summary_file} ----------- {week}.")
-            generate_summary.generate_summary(output_file, weekly_summary_file, week=week)  
+            generate_summary.generate_weekly_summary(output_file, weekly_summary_file, week=week)  
             
             week += 1
 
