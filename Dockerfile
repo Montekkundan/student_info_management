@@ -11,7 +11,7 @@ RUN bun i
 COPY web/ /app/web/
 
 # Build the Next.js app during Docker build
-RUN bun run build
+# RUN bun run build
 
 FROM python:3.9-slim
 
@@ -35,7 +35,7 @@ RUN groupadd teacher && usermod -aG teacher root
 # Copy the Python project files
 COPY . /app
 
-COPY --from=build-nextjs /app/web/.next /app/web/.next
+# COPY --from=build-nextjs /app/web/.next /app/web/.next
 COPY --from=build-nextjs /app/web/public /app/web/public
 COPY --from=build-nextjs /app/web/node_modules /app/web/node_modules
 

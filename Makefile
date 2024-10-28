@@ -10,8 +10,6 @@ LOG_FILE = $(LOG_DIR)/project.log
 DOCKER_IMAGE = student_info_management
 DOCKER_CONTAINER = student_info_management_container
 
-# Targets
-
 # Run the project inside Docker: Generate basic info, simulate academic data, merge info, and generate summary
 run:
 	@echo "Generating basic_info.txt..."
@@ -43,8 +41,23 @@ summary:
 reset: clean
 	@echo "Resetting the project environment..."
 
-# Web target to run Next.js
+bun-install:
+	@echo "Installing dependencies with Bun..."
+	cd web && bun i
+
+build-web:
+	@echo "Building Next.js app..."
+	cd web && bun run build
+
 web:
+	@echo "Checking and killing any process running on port 3000..."
+	-lsof -ti tcp:3000 | xargs kill -9 || true
+	@echo "DEV MODE Next.js app..."
+	(cd web && bun run dev &) # Run Next.js in the background
+	@trap 'echo "Stopping Next.js..."; lsof -ti tcp:3000 | xargs kill -9' INT
+	@echo "Next.js app is running at http://localhost:3000"
+
+web-start:
 	@echo "Checking and killing any process running on port 3000..."
 	-lsof -ti tcp:3000 | xargs kill -9 || true
 	@echo "Starting Next.js app..."
