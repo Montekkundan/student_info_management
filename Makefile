@@ -12,7 +12,7 @@ DOCKER_CONTAINER = student_info_management_container
 
 # Targets
 
-# Run the project: Generate basic info, simulate academic data, merge info, and generate summary
+# Run the project inside Docker: Generate basic info, simulate academic data, merge info, and generate summary
 run:
 	@echo "Generating basic_info.txt..."
 	docker exec $(DOCKER_CONTAINER) python3 $(SRC_DIR)student_info_manager.py --generate-basic-info --config $(CONFIG_PATH)
@@ -43,9 +43,14 @@ summary:
 reset: clean
 	@echo "Resetting the project environment..."
 
+# Web target to run Next.js
 web:
-	@echo "Starting Streamlit web app..."
-	docker exec $(DOCKER_CONTAINER) streamlit run web/App.py
+	@echo "Checking and killing any process running on port 3000..."
+	-lsof -ti tcp:3000 | xargs kill -9 || true
+	@echo "Starting Next.js app..."
+	(cd web && bun run start &) # Run Next.js in the background
+	@trap 'echo "Stopping Next.js..."; lsof -ti tcp:3000 | xargs kill -9' INT
+	@echo "Next.js app is running at http://localhost:3000"
 
 help:
 	@echo "Usage:"
@@ -55,9 +60,9 @@ help:
 	@echo "  make summary      - Generate a student summary"
 	@echo "  make reset        - Reset the project (clean and prepare)"
 	@echo "  make help         - Show this help message"
-	@echo "  make web          - Start the Streamlit web app"
+	@echo "  make web          - Start the Next.js web app"
 
-# Build Docker image
+# Build Docker image (Next.js app is built during Docker build)
 build:
 	@echo "Building Docker image..."
 	docker build -t $(DOCKER_IMAGE) .
@@ -65,7 +70,7 @@ build:
 # Run Docker container
 docker-run: build
 	@echo "Running Docker container..."
-	docker run -d --name $(DOCKER_CONTAINER) -p 8501:8501 -v $(PWD):/app $(DOCKER_IMAGE)
+	docker run -d --name $(DOCKER_CONTAINER) -p 3000:3000 -v $(PWD):/app $(DOCKER_IMAGE)
 	@echo "Container $(DOCKER_CONTAINER) is running!"
 
 # Stop and remove Docker container
