@@ -4,6 +4,7 @@ import path from 'path'
 
 const rootDir = path.resolve(process.cwd(), '..')
 
+// Function to get the directory structure
 function getDirectoryStructure(dir: string): any {
   const files = fs.readdirSync(dir)
   const structure = files
@@ -27,7 +28,22 @@ function getDirectoryStructure(dir: string): any {
   return structure
 }
 
+// Fetch directory structure or content
 export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url)
+  const filePath = searchParams.get('path')
+
+  if (filePath) {
+    const fullPath = path.join(rootDir, filePath)
+    try {
+      const content = fs.readFileSync(fullPath, 'utf-8')
+      return NextResponse.json({ content, path: filePath })
+    } catch (error) {
+      console.error('Error reading file:', error)
+      return NextResponse.json({ error: 'Failed to read file' }, { status: 500 })
+    }
+  }
+
   try {
     const structure = {
       src: {

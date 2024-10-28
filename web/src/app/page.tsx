@@ -32,11 +32,17 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import ReactMarkdown from "react-markdown"
+import { darcula } from 'react-syntax-highlighter/dist/cjs/styles/prism'
+import SyntaxHighlighter from "react-syntax-highlighter"
+import remarkGfm from 'remark-gfm';
+import { renderers } from "@/components/renderer"
 
 export default function Page() {
   const [isTerminalOpen, setIsTerminalOpen] = React.useState(false)
   const [fileTree, setFileTree] = React.useState<any>({})
   const [currentPath, setCurrentPath] = React.useState<string[]>([])
+  const [fileContent, setFileContent] = React.useState<string | null>(null)
 
   React.useEffect(() => {
     fetchFileStructure()
@@ -52,9 +58,19 @@ export default function Page() {
     }
   }
 
+  const fetchFileContent = async (path: string) => {
+    try {
+      const response = await fetch(`/api/file-struct?path=${encodeURIComponent(path)}`)
+      const data = await response.json()
+      setFileContent(data.content)
+    } catch (error) {
+      console.error('Error fetching file content:', error)
+    }
+  }
+
   return (
     <SidebarProvider>
-      <AppSidebar fileTree={fileTree} setCurrentPath={setCurrentPath} />
+      <AppSidebar fileTree={fileTree} setCurrentPath={setCurrentPath} fetchFileContent={fetchFileContent} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ml-1" />
@@ -87,12 +103,24 @@ export default function Page() {
         </header>
         <div className="relative flex flex-1 flex-col">
           <div className="flex flex-1 flex-col gap-4 p-4">
-            <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-              <div className="aspect-video rounded-xl bg-muted/50" />
-              <div className="aspect-video rounded-xl bg-muted/50" />
-              <div className="aspect-video rounded-xl bg-muted/50" />
+          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min p-4">
+              {fileContent ? (
+                currentPath[currentPath.length - 1].endsWith('.md') ? (
+                  <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={renderers}
+                >
+                    {fileContent}
+                  </ReactMarkdown>
+                ) : (
+                  <SyntaxHighlighter language="python" style={darcula}>
+                    {fileContent}
+                  </SyntaxHighlighter>
+                )
+              ) : (
+                <p>Select a file to view its content</p>
+              )}
             </div>
-            <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
           </div>
           <TerminalView isOpen={isTerminalOpen} onClose={() => setIsTerminalOpen(false)} />
         </div>
@@ -101,7 +129,7 @@ export default function Page() {
   )
 }
 
-function AppSidebar({ fileTree, setCurrentPath }: { fileTree: any, setCurrentPath: (path: string[]) => void }) {
+function AppSidebar({ fileTree, setCurrentPath, fetchFileContent }: { fileTree: any, setCurrentPath: (path: string[]) => void, fetchFileContent: (path: string) => void }) {
   return (
     <Sidebar>
       <SidebarContent>
@@ -111,7 +139,7 @@ function AppSidebar({ fileTree, setCurrentPath }: { fileTree: any, setCurrentPat
             {Object.keys(fileTree).length > 0 ? (
               <SidebarMenu>
                 {Object.entries(fileTree).map(([key, value]: [string, any]) => (
-                  <Tree key={key} item={{ name: key, ...value }} path={[key]} setCurrentPath={setCurrentPath} />
+                  <Tree key={key} item={{ name: key, ...value }} path={[key]} setCurrentPath={setCurrentPath} fetchFileContent={fetchFileContent} />
                 ))}
               </SidebarMenu>
             ) : (
@@ -125,9 +153,12 @@ function AppSidebar({ fileTree, setCurrentPath }: { fileTree: any, setCurrentPat
   )
 }
 
-function Tree({ item, path, setCurrentPath }: { item: any, path: string[], setCurrentPath: (path: string[]) => void }) {
+function Tree({ item, path, setCurrentPath, fetchFileContent }: { item: any, path: string[], setCurrentPath: (path: string[]) => void, fetchFileContent: (path: string) => void }) {
   const handleClick = () => {
     setCurrentPath(path)
+    if (!item.isDirectory) {
+      fetchFileContent(path.join('/'))
+    }
   }
 
   if (!item.isDirectory) {
@@ -143,9 +174,7 @@ function Tree({ item, path, setCurrentPath }: { item: any, path: string[], setCu
 
   return (
     <SidebarMenuItem>
-      <Collapsible
-      className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90"
-      >
+      <Collapsible className="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90">
         <CollapsibleTrigger asChild>
           <SidebarMenuButton onClick={handleClick}>
             <ChevronRight className="transition-transform mr-2 h-4 w-4" />
@@ -157,10 +186,10 @@ function Tree({ item, path, setCurrentPath }: { item: any, path: string[], setCu
           <SidebarMenuSub>
             {Array.isArray(item.children) ? (
               item.children.map((child: any) => (
-                <Tree key={child.name} item={child} path={[...path, child.name]} setCurrentPath={setCurrentPath} />
+                <Tree key={child.name} item={child} path={[...path, child.name]} setCurrentPath={setCurrentPath} fetchFileContent={fetchFileContent} />
               ))
             ) : (
-              <Tree key={item.name} item={item} path={path} setCurrentPath={setCurrentPath} />
+              <Tree key={item.name} item={item} path={path} setCurrentPath={setCurrentPath} fetchFileContent={fetchFileContent} />
             )}
           </SidebarMenuSub>
         </CollapsibleContent>
@@ -172,6 +201,8 @@ function Tree({ item, path, setCurrentPath }: { item: any, path: string[], setCu
 function TerminalView({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [command, setCommand] = React.useState("")
   const [output, setOutput] = React.useState("")
+  const rootDir = "/";
+  const [currentDir, setCurrentDir] = React.useState(rootDir)
   const [history, setHistory] = React.useState<string[]>([])
   const [historyIndex, setHistoryIndex] = React.useState(-1)
   const inputRef = React.useRef<HTMLInputElement>(null)
@@ -181,7 +212,7 @@ function TerminalView({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
 
     if (!command.trim()) return
 
-    setOutput((prev) => `${prev}$ ${command}\n`)
+    setOutput((prev) => `${prev}${currentDir} > ${command}\n`)
     setHistory((prev) => [...prev, command])
     setHistoryIndex(-1)
 
@@ -195,7 +226,15 @@ function TerminalView({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
       })
 
       const result = await response.json()
-      setOutput((prev) => `${prev}${result.output}\n`)
+
+      if (result.output === '__clear__') {
+        setOutput("")
+      } else {
+        setOutput((prev) => `${prev}${result.output}\n`)
+        if (result.currentDir) {
+          setCurrentDir(result.currentDir)
+        }
+      }
     } catch (error) {
       console.error('Error executing command:', error)
       setOutput((prev) => `${prev}Error: Failed to execute command\n`)
@@ -233,7 +272,7 @@ function TerminalView({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
 
   return (
     <div
-      className={`fixed bottom-4 right-4 w-96 rounded-lg bg-black text-white shadow-lg transition-all duration-300 ease-in-out ${
+      className={`fixed bottom-4 right-4 w-96 md:w-2/4 rounded-lg bg-black text-white shadow-lg transition-all duration-300 ease-in-out ${
         isOpen ? "h-96 opacity-100" : "h-0 opacity-0 pointer-events-none"
       }`}
     >
@@ -246,7 +285,7 @@ function TerminalView({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
       <div className="h-[calc(100%-2.5rem)] overflow-auto p-4">
         <pre className="text-sm whitespace-pre-wrap">{output}</pre>
         <div className="flex items-center">
-          <span className="mr-2">$</span>
+          <span className="mr-2">{currentDir} {'>'}</span>
           <form onSubmit={handleCommandSubmit} className="flex-1">
             <input
               ref={inputRef}
