@@ -43,4 +43,4 @@ COPY --from=build-nextjs /app/web/node_modules /app/web/node_modules
 EXPOSE 3000
 
 # Start both Python and Next.js concurrently
-CMD ["sh", "-c", "make run & cd web && bun run start"]
+CMD ["tail", "-f", "/dev/null"]

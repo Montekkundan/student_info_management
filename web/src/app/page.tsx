@@ -122,7 +122,7 @@ export default function Page() {
               )}
             </div>
           </div>
-          <TerminalView isOpen={isTerminalOpen} onClose={() => setIsTerminalOpen(false)} />
+          <TerminalView isOpen={isTerminalOpen} onClose={() => setIsTerminalOpen(false)} fetchFileStructure={fetchFileStructure} fileTree={fileTree} />
         </div>
       </SidebarInset>
     </SidebarProvider>
@@ -198,7 +198,7 @@ function Tree({ item, path, setCurrentPath, fetchFileContent }: { item: any, pat
   )
 }
 
-function TerminalView({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+function TerminalView({ isOpen, onClose, fetchFileStructure, fileTree }: { isOpen: boolean; onClose: () => void; fetchFileStructure: () => void; fileTree: any; }) {
   const [command, setCommand] = React.useState("")
   const [output, setOutput] = React.useState("")
   const rootDir = "/";
@@ -235,12 +235,39 @@ function TerminalView({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
           setCurrentDir(result.currentDir)
         }
       }
+
+      // Re-fetch file structure after running make commands
+      if (command.includes('make run') || command.includes('make clean')) {
+        fetchFileStructure()
+
+        // Close the open file if it no longer exists
+        const openFilePath = currentDir
+        const fileExists = checkIfFileExists(openFilePath, fileTree)
+        if (!fileExists) {
+          setOutput(prev => `${prev}\nFile no longer exists.\n`)
+        }
+      }
     } catch (error) {
       console.error('Error executing command:', error)
       setOutput((prev) => `${prev}Error: Failed to execute command\n`)
     }
 
     setCommand("")
+  }
+
+  const checkIfFileExists = (path: string, tree: any): boolean => {
+    const parts = path.split('/')
+    let current = tree
+    for (const part of parts) {
+      if (current.children) {
+        const found = current.children.find((child: any) => child.name === part)
+        if (!found) return false
+        current = found
+      } else {
+        return false
+      }
+    }
+    return true
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

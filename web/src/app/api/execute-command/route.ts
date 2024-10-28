@@ -4,7 +4,6 @@ import path from 'path'
 import os from 'os'
 import fs from 'fs'
 
-// Root directory
 const rootDir = path.resolve(process.cwd(), '..')
 
 let currentDir = rootDir
@@ -60,8 +59,13 @@ export async function POST(request: NextRequest) {
         console.error(`Error executing command: ${error}`)
         resolve(NextResponse.json({ error: 'Failed to execute command', output: stderr }, { status: 500 }))
       } else {
+        if (command.includes('make run') || command.includes('make clean')) {
+          exec('curl /api/file-struct')
+        }
+
         resolve(NextResponse.json({ output: stdout, currentDir }))
       }
     })
   })
 }
+

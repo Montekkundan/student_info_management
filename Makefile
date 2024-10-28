@@ -10,8 +10,27 @@ LOG_FILE = $(LOG_DIR)/project.log
 DOCKER_IMAGE = student_info_management
 DOCKER_CONTAINER = student_info_management_container
 
-# Run the project inside Docker: Generate basic info, simulate academic data, merge info, and generate summary
+# Run the project: Generate basic info, simulate academic data, merge info, and generate summary
 run:
+	@echo "Generating basic_info.txt..."
+	python3 $(SRC_DIR)student_info_manager.py --generate-basic-info --config $(CONFIG_PATH)
+	@echo "Simulating academic data..."
+	python3 $(SRC_DIR)simulation.py --simulate --config $(CONFIG_PATH)
+	@echo "Merging basic_info.txt and academic_info.txt into student_info.txt..."
+	python3 $(SRC_DIR)student_info_manager.py --merge-info --config $(CONFIG_PATH)
+	@echo "Process completed!"
+
+clean:
+	@echo "Cleaning generated files..."
+	rm -f $(DATA_DIR)basic_info.txt
+	rm -f $(DATA_DIR)academic_info.txt
+	rm -f $(DATA_DIR)student_info.txt
+	rm -f $(DATA_DIR)student_summary.txt
+	rm -rf $(SUMMARY_DIR)
+	@echo "Cleanup complete. All generated files have been removed."
+
+# Run the project inside Docker: Generate basic info, simulate academic data, merge info, and generate summary
+rund:
 	@echo "Generating basic_info.txt..."
 	docker exec $(DOCKER_CONTAINER) python3 $(SRC_DIR)student_info_manager.py --generate-basic-info --config $(CONFIG_PATH)
 	@echo "Simulating academic data..."
@@ -20,7 +39,7 @@ run:
 	docker exec $(DOCKER_CONTAINER) python3 $(SRC_DIR)student_info_manager.py --merge-info --config $(CONFIG_PATH)
 	@echo "Process completed!"
 
-clean:
+cleand:
 	@echo "Cleaning generated files..."
 	docker exec $(DOCKER_CONTAINER) rm -f $(DATA_DIR)basic_info.txt
 	docker exec $(DOCKER_CONTAINER) rm -f $(DATA_DIR)academic_info.txt
@@ -31,9 +50,17 @@ clean:
 
 simulate:
 	@echo "Simulating academic data..."
+	python3 $(SRC_DIR)simulation.py --simulate --config $(CONFIG_PATH)
+
+simulated:
+	@echo "Simulating academic data..."
 	docker exec $(DOCKER_CONTAINER) python3 $(SRC_DIR)simulation.py --simulate --config $(CONFIG_PATH)
 
 summary:
+	@echo "Generating student summary..."
+	python3 $(SRC_DIR)generate_summary.py --config $(CONFIG_PATH)
+
+summaryd:
 	@echo "Generating student summary..."
 	docker exec $(DOCKER_CONTAINER) python3 $(SRC_DIR)generate_summary.py --config $(CONFIG_PATH)
 
@@ -56,6 +83,7 @@ web:
 	(cd web && bun run dev &) # Run Next.js in the background
 	@trap 'echo "Stopping Next.js..."; lsof -ti tcp:3000 | xargs kill -9' INT
 	@echo "Next.js app is running at http://localhost:3000"
+	@wait $$(cat web.pid)
 
 web-start:
 	@echo "Checking and killing any process running on port 3000..."
