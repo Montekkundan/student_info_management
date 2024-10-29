@@ -256,7 +256,7 @@ student_info_management/
 ## Pm2
 
 ```bash
-pm2 start 'bun run start' --name nextjs-app
+pm2 start 'bun run start' --name nextjs
 ```
 
 delete the app

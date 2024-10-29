@@ -8,11 +8,11 @@ import Link from "next/link"
 export default function Component() {
   return (
     <div className="container mx-auto p-4 space-y-8">    
-    <h1 className="text-3xl font-bold text-center mb-8">
+      <h1 className="text-3xl font-bold text-center mb-8">
         <Link href="/">
-           Home 
+          Home 
         </Link>
-        </h1>  
+      </h1>  
       <Tabs defaultValue="analysis" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="analysis">Problem Analysis</TabsTrigger>
@@ -58,7 +58,7 @@ export default function Component() {
                 <li>Hourly simulation of new student data</li>
                 <li>Weekly summary generation</li>
                 <li>Configuration management via file and command-line arguments</li>
-                <li>Access control limited to "teacher" user group</li>
+                <li>Access control limited to &quot;teacher&quot; user group</li>
                 <li>Exception handling and non-zero exit codes</li>
               </ul>
             </CardContent>
@@ -137,7 +137,7 @@ export default function Component() {
 
 # Usage
 student_gpa = calculate_gpa(85, 90, 88, 92)
-print(f"Student GPA: {student_gpa}")`}
+print(f&quot;Student GPA: {student_gpa}&quot;)`}
                   </pre>
                 </div>
               </div>
