@@ -189,6 +189,6 @@ if __name__ == "__main__":
     config.read('config/student_management.cfg')
 
     student_info_file = config.get('DEFAULT', 'student_info_file', fallback='data/student_info.txt')
-    output_file = config.get('DEFAULT', 'summary_output_file', fallback='data/summary/student_summary.txt')
+    output_file = config.get('DEFAULT', 'summary_output_file', fallback='data/final_summary.txt')
 
     generate_final_summary(student_info_file, output_file)

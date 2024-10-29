@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
         console.error(`Error executing command: ${error}`)
         resolve(NextResponse.json({ error: 'Failed to execute command', output: stderr }, { status: 500 }))
       } else {
-        if (command.includes('make run') || command.includes('make clean')) {
+        if (command.includes('make run') || command.includes('make clean') || command.includes('make summary')) {
           exec('curl /api/file-struct')
         }
 

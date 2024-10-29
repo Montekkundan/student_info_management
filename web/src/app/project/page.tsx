@@ -37,6 +37,7 @@ import { darcula } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 import SyntaxHighlighter from "react-syntax-highlighter"
 import remarkGfm from 'remark-gfm';
 import { renderers } from "@/components/renderer"
+import Link from "next/link"
 
 export default function Page() {
   const [isTerminalOpen, setIsTerminalOpen] = React.useState(false)
@@ -134,7 +135,11 @@ function AppSidebar({ fileTree, setCurrentPath, fetchFileContent }: { fileTree: 
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Files</SidebarGroupLabel>
+          <SidebarGroupLabel>
+            <Link href="/">
+              Home
+            </Link>
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             {Object.keys(fileTree).length > 0 ? (
               <SidebarMenu>
@@ -198,61 +203,87 @@ function Tree({ item, path, setCurrentPath, fetchFileContent }: { item: any, pat
   )
 }
 
-function TerminalView({ isOpen, onClose, fetchFileStructure, fileTree }: { isOpen: boolean; onClose: () => void; fetchFileStructure: () => void; fileTree: any; }) {
-  const [command, setCommand] = React.useState("")
-  const [output, setOutput] = React.useState("")
-  const rootDir = "/";
+function TerminalView({
+  isOpen,
+  onClose,
+  fetchFileStructure,
+  fileTree
+}: {
+  isOpen: boolean
+  onClose: () => void
+  fetchFileStructure: () => void
+  fileTree: any
+}) {
+  const [command, setCommand] = React.useState('')
+  const [output, setOutput] = React.useState('')
+  const rootDir = '/'
   const [currentDir, setCurrentDir] = React.useState(rootDir)
   const [history, setHistory] = React.useState<string[]>([])
   const [historyIndex, setHistoryIndex] = React.useState(-1)
   const inputRef = React.useRef<HTMLInputElement>(null)
 
-  const handleCommandSubmit = async (e: React.FormEvent) => {
+  async function handleCommandSubmit(e: React.FormEvent) {
     e.preventDefault()
-
+  
     if (!command.trim()) return
-
+  
     setOutput((prev) => `${prev}${currentDir} > ${command}\n`)
     setHistory((prev) => [...prev, command])
     setHistoryIndex(-1)
-
+  
     try {
       const response = await fetch('/api/execute-command', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ command }),
+        body: JSON.stringify({ command })
       })
-
-      const result = await response.json()
-
-      if (result.output === '__clear__') {
-        setOutput("")
-      } else {
-        setOutput((prev) => `${prev}${result.output}\n`)
-        if (result.currentDir) {
-          setCurrentDir(result.currentDir)
+  
+      if (!response.body) return
+      const reader = response.body.getReader()
+      let done = false
+      const decoder = new TextDecoder()
+  
+      while (!done) {
+        const { value, done: doneReading } = await reader.read()
+        done = doneReading
+        const chunk = decoder.decode(value, { stream: true })
+      
+        if (chunk.includes('__clear__')) {
+          setOutput('') // Clear terminal output
+        } else {
+          try {
+            const parsedChunk = JSON.parse(chunk)
+      
+            // Update directory path if cd command is used
+            if (parsedChunk.currentDir) {
+              setCurrentDir(parsedChunk.currentDir)
+            }
+      
+            setOutput((prev) => `${prev}${parsedChunk.output || ''}`)
+          } catch (error) {
+            // If JSON parsing fails, treat chunk as plain text output
+            setOutput((prev) => `${prev}${chunk}`)
+          }
         }
       }
-
-      // Re-fetch file structure after running make commands
-      if (command.includes('make run') || command.includes('make clean')) {
+  
+      if (command.includes('make run') || command.includes('make clean') || command.includes('make summary')) {
         fetchFileStructure()
-
-        // Close the open file if it no longer exists
+  
         const openFilePath = currentDir
         const fileExists = checkIfFileExists(openFilePath, fileTree)
         if (!fileExists) {
-          setOutput(prev => `${prev}\nFile no longer exists.\n`)
+          setOutput((prev) => `${prev}\nFile no longer exists.\n`)
         }
       }
     } catch (error) {
       console.error('Error executing command:', error)
       setOutput((prev) => `${prev}Error: Failed to execute command\n`)
     }
-
-    setCommand("")
+  
+    setCommand('')
   }
 
   const checkIfFileExists = (path: string, tree: any): boolean => {
