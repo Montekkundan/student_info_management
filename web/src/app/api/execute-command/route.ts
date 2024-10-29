@@ -8,7 +8,7 @@ const rootDir = path.resolve(process.cwd(), '..')
 
 let currentDir = rootDir
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   const body = await request.json()
   const { command } = body
 
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return new Promise((resolve) => {
+  return new Promise<NextResponse>((resolve) => {
     exec(adjustedCommand, { cwd: currentDir }, (error, stdout, stderr) => {
       if (error) {
         console.error(`Error executing command: ${error}`)
@@ -68,4 +68,3 @@ export async function POST(request: NextRequest) {
     })
   })
 }
-
