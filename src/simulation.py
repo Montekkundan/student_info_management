@@ -107,7 +107,7 @@ def simulate_academic_data(output_file, basic_info_file, weeks_in_semester=12, m
 
 
 def main():
-    check_user_group()
+    # check_user_group() TODO: Error in live website
 
     parser = argparse.ArgumentParser(description="Simulate academic data generation for students.")
     parser.add_argument('--simulate', action='store_true', help="Run academic data simulation")

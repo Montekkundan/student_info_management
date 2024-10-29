@@ -265,3 +265,15 @@ student_info_management/
         
 
 ```
+
+## Pm2
+
+```bash
+pm2 start 'bun run start' --name nextjs-app
+```
+
+delete the app
+
+```bash
+pm2 delete nextjs-app
+```
