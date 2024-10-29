@@ -18,15 +18,12 @@ export function SiteHeader() {
           </Link>
 
           <div className="ml-auto flex h-full items-center">
-            <Link className="mr-6 text-sm" href="/">
-              PPT
-            </Link>
             <Link
               className={cn(
                 buttonVariants({ variant: "secondary" }),
                 "mr-6 text-sm"
               )}
-              href="/"
+              href="/docs"
             >
               DOCS
             </Link>

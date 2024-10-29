@@ -133,13 +133,6 @@ To clean all generated files, essentially resetting the project to its initial s
 ```bash
 make reset
 ```
-
-### Run the Streamlit Web App
-
-To run the Streamlit web app, use:
-
-```bash
-make web
 ```
 
 
@@ -256,12 +249,6 @@ student_info_management/
 │   ├── config_handler.py        
 │   └── generate_summary.py      
 ├── web/
-│   ├── App.py                  # Streamlit entry point (homepage)
-│   └── pages/                  # Streamlit pages directory
-│       ├── 1_BasicInfo.py      # Display basic_info.txt
-│       ├── 2_AcademicInfo.py   # Display academic_info.txt
-│       ├── 3_StudentInfo.py    # Display student_info.txt
-│       └── 4_Summary.py        # Display student_summary.txt
         
 
 ```
@@ -276,4 +263,10 @@ delete the app
 
 ```bash
 pm2 delete nextjs-app
+```
+
+## Restart Nginx
+
+```bash
+sudo systemctl restart nginx
 ```
