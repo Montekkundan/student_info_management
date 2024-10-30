@@ -25,6 +25,7 @@ clean:
 	rm -f $(DATA_DIR)basic_info.txt
 	rm -f $(DATA_DIR)academic_info.txt
 	rm -f $(DATA_DIR)student_info.txt
+	rm -f $(DATA_DIR)student_summary.txt
 	rm -f $(DATA_DIR)final_summary.txt
 	rm -rf $(SUMMARY_DIR)
 	@echo "Cleanup complete. All generated files have been removed."
@@ -44,6 +45,7 @@ cleand:
 	docker exec $(DOCKER_CONTAINER) rm -f $(DATA_DIR)basic_info.txt
 	docker exec $(DOCKER_CONTAINER) rm -f $(DATA_DIR)academic_info.txt
 	docker exec $(DOCKER_CONTAINER) rm -f $(DATA_DIR)student_info.txt
+	docker exec $(DOCKER_CONTAINER) rm -f $(DATA_DIR)student_summary.txt
 	docker exec $(DOCKER_CONTAINER) rm -f $(DATA_DIR)final_summary.txt
 	docker exec $(DOCKER_CONTAINER) rm -rf $(SUMMARY_DIR)
 	@echo "Cleanup complete. All generated files have been removed."
