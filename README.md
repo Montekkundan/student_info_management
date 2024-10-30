@@ -9,6 +9,12 @@ This project implements a student information management system using Python, de
 git clone https://github.com/Montekkundan/student_info_management.git
 ```
 
+## Using website
+
+go to `341.montek.dev/project` open the terminal from top right corner and run the Make file commands to generate data!
+
+![image](/web/public/hero.png)
+
 ## Prerequisites
 
 Make sure you have Python installed (version 3.6 or above). You can install any necessary libraries by running:
